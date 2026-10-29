@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NetLab — Advanced Network Topology Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#"><span class="brand-mark">N</span><span>NetLab <small>ADVANCED NETWORK SIMULATOR</small></span></a>
+  <div class="top-actions"><span class="online-indicator"><i></i> Local simulation</span><button id="themeBtn" class="btn btn-soft">☾ Dark mode</button><button id="resetBtn" class="btn btn-soft">Reset lab</button></div>
+</header>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="side-title"><span class="step">01</span><div><b>Topology</b><small>Choose a network structure</small></div></div>
+    <select id="topologySelect">
+      <option value="star">Star topology</option><option value="bus">Bus topology</option><option value="ring">Ring topology</option><option value="mesh">Mesh topology</option><option value="tree">Tree topology</option><option value="custom">Custom topology</option>
+    </select>
+    <p class="helper" id="topologyHint">Devices connect to a central switch.</p>
+    <div class="side-title gap-top"><span class="step">02</span><div><b>Add device</b><small>Then drag it on the canvas</small></div></div>
+    <div class="device-grid">
+      <button class="device-add" data-type="pc"><span class="dev-icon pc">▣</span><b>Computer</b><small>End device</small></button>
+      <button class="device-add" data-type="server"><span class="dev-icon server">▤</span><b>Server</b><small>Service host</small></button>
+      <button class="device-add" data-type="switch"><span class="dev-icon switch">⇄</span><b>Switch</b><small>Layer 2</small></button>
+      <button class="device-add" data-type="router"><span class="dev-icon router">⌘</span><b>Router</b><small>Layer 3</small></button>
+    </div>
+    <div class="side-title gap-top"><span class="step">03</span><div><b>Connect devices</b><small>Choose two nodes</small></div></div>
+    <label class="field-label" for="linkA">FROM DEVICE</label><select id="linkA"></select>
+    <label class="field-label" for="linkB">TO DEVICE</label><select id="linkB"></select>
+    <button id="connectBtn" class="btn btn-primary wide">＋ Create connection</button>
+    <button id="deleteLinkBtn" class="btn btn-soft wide">Remove selected link</button>
+    <div class="side-title gap-top"><span class="step">04</span><div><b>Packet simulator</b><small>Test a route</small></div></div>
+    <label class="field-label" for="sourceSelect">SOURCE</label><select id="sourceSelect"></select>
+    <label class="field-label" for="destSelect">DESTINATION</label><select id="destSelect"></select>
+    <div class="button-row"><button id="sendBtn" class="btn btn-primary">▶ Send packet</button><button id="pauseBtn" class="btn btn-soft" disabled>Ⅱ Pause</button></div>
+    <button id="pingBtn" class="btn btn-soft wide">⌁ Simulate ping</button>
+    <p class="helper">Tip: Drag devices to reposition them. Select a link in the canvas to disable it.</p>
+  </aside>
+  <main class="main">
+    <div class="page-heading"><div><p class="eyebrow">NETWORK LAB / INTERACTIVE WORKSPACE</p><h1>Design. Connect. <span>Simulate.</span></h1><p class="subheading">Build a network and observe how devices communicate.</p></div><div class="status-pill"><i></i><span id="statusText">Ready to simulate</span></div></div>
+    <section class="stats">
+      <article class="stat"><span class="stat-icon blue">◈</span><div><small>Devices</small><strong id="deviceCount">5</strong><em>network nodes</em></div></article>
+      <article class="stat"><span class="stat-icon green">⌁</span><div><small>Connections</small><strong id="linkCount">4</strong><em>network links</em></div></article>
+      <article class="stat"><span class="stat-icon amber">➤</span><div><small>Packets sent</small><strong id="packetCount">0</strong><em>this session</em></div></article>
+      <article class="stat"><span class="stat-icon purple">✓</span><div><small>Delivery rate</small><strong id="deliveryRate">—</strong><em>simulated results</em></div></article>
+    </section>
+    <section class="panel canvas-panel">
+      <div class="panel-heading"><div><h2>Network canvas</h2><p id="canvasSubtitle">Star topology · drag devices to arrange</p></div><div class="legend"><span><i class="legend-node"></i>Device</span><span><i class="legend-link"></i>Active link</span><span><i class="legend-packet"></i>Packet</span></div></div>
+      <div class="canvas-wrap"><svg id="networkCanvas" role="img" aria-label="Interactive network diagram"></svg><div class="canvas-help">Drag a device · Click a link to enable/disable it</div></div>
+      <div class="canvas-bottom"><span><i class="green-dot"></i> Simulation ready</span><div class="canvas-actions"><button id="saveBtn" class="text-btn">Save JSON</button><button id="loadBtn" class="text-btn">Load JSON</button><input id="loadFile" type="file" accept=".json,application/json" hidden><button id="pngBtn" class="text-btn">Export PNG</button></div></div>
+    </section>
+    <div class="lower-grid">
+      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">SELECTED DEVICE</p><h2 id="selectedTitle">PC 1</h2></div><span class="tag" id="selectedType">COMPUTER</span></div>
+        <div class="form-grid"><div><label class="field-label" for="deviceName">DEVICE NAME</label><input id="deviceName" type="text" placeholder="Device name"></div><div><label class="field-label" for="deviceIp">IP ADDRESS</label><input id="deviceIp" type="text" placeholder="192.168.1.10"></div><div><label class="field-label" for="deviceMask">SUBNET MASK</label><input id="deviceMask" type="text" value="255.255.255.0"></div><div><label class="field-label" for="deviceGateway">DEFAULT GATEWAY</label><input id="deviceGateway" type="text" placeholder="192.168.1.1"></div></div>
+        <div class="device-controls"><button id="applyConfigBtn" class="btn btn-primary">Apply configuration</button><button id="deleteDeviceBtn" class="btn btn-danger">Delete device</button><span id="configMessage" class="inline-message"></span></div>
+      </section>
+      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">TOPOLOGY GUIDE</p><h2 id="infoTitle">Star topology</h2></div><span class="tag">LEARN</span></div><p class="description" id="infoDescription">All end devices connect to a central switch. Easy to manage, but the switch is a single point of failure.</p><div class="pros-grid"><div><b>Advantages</b><p id="pros">Easy to manage · Simple fault isolation</p></div><div><b>Limitations</b><p id="cons">Central switch failure can stop communication</p></div></div></section>
+    </div>
+    <section class="panel activity-panel"><div class="panel-heading"><div><p class="eyebrow">EVENT STREAM</p><h2>Simulation activity</h2></div><button id="clearLogBtn" class="text-btn">Clear log</button></div><div id="activityLog" class="activity-log"></div></section>
+    <footer>NetLab · Educational network simulation <span>Does not transmit real network packets</span></footer>
+  </main>
+</div>
+<script src="script.js"></script>
+</body></html>
